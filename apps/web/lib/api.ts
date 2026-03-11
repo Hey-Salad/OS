@@ -1,4 +1,4 @@
-import type { Employee, Department, OfficeName, Seniority, EmployeeStatus } from './types'
+import { DEPARTMENTS, type Employee, type Department, type OfficeName, type Seniority, type EmployeeStatus } from './types'
 import { fallbackOffices, type Office } from './offices'
 
 interface ApiOfficeRecord {
@@ -125,24 +125,26 @@ function mapEmployees(records: ApiEmployeeRecord[], officeById: Map<string, ApiO
 
 function mapRuntimeAgents(records: RuntimeAgentRecord[]): Employee[] {
   return records.map((record, index) => {
+    const metadata = parseJson(record.metadata_json)
     const [firstName = 'Agent', ...rest] = (record.name || `Agent ${index + 1}`).split(' ')
     const lastName = rest.join(' ') || 'Worker'
     const office = deriveOffice(record, index)
     const department = deriveDepartment(record)
+    const seniority = deriveSeniority(record.role, metadata)
     return {
       id: record.id,
       firstName,
       lastName,
-      email: `${slugify(firstName)}.${slugify(lastName)}@heysalad.app`,
+      email: firstStringValue(metadata, ['email']) ?? `${slugify(firstName)}.${slugify(lastName)}@heysalad.app`,
       department,
       role: record.role ?? 'AI Agent',
-      seniority: deriveSeniority(record.role),
+      seniority,
       office,
       status: normalizeRuntimeStatus(record.status),
-      startDate: new Date().toISOString().slice(0, 10),
-      reportsTo: null,
+      startDate: firstStringValue(metadata, ['startDate', 'start_date']) ?? new Date().toISOString().slice(0, 10),
+      reportsTo: firstStringValue(metadata, ['reportsTo', 'reports_to']),
       skills: parseSkills(record.skills_json),
-      bio: record.owner ?? 'OpenClaw runtime agent',
+      bio: firstStringValue(metadata, ['bio']) ?? record.owner ?? 'OpenClaw runtime agent',
     }
   })
 }
@@ -163,11 +165,17 @@ function decorateOffices(offices: Office[], employees: Employee[]): Office[] {
 
 function deriveOffice(record: RuntimeAgentRecord, index: number): OfficeName {
   const metadata = parseJson(record.metadata_json)
-  const office = metadata?.office ?? metadata?.officeName ?? metadata?.office_name
-  return normalizeOfficeName(typeof office === 'string' ? office : null, index)
+  const office = firstStringValue(metadata, ['office', 'officeName', 'office_name'])
+  return normalizeOfficeName(office, index)
 }
 
 function deriveDepartment(record: RuntimeAgentRecord): Department {
+  const metadata = parseJson(record.metadata_json)
+  const explicitDepartment = firstStringValue(metadata, ['department'])
+  if (explicitDepartment && DEPARTMENTS.includes(explicitDepartment as Department)) {
+    return explicitDepartment as Department
+  }
+
   const role = (record.role ?? '').toLowerCase()
   if (role.includes('design')) return 'Product & Innovation'
   if (role.includes('finance')) return 'Financial Management'
@@ -177,10 +185,19 @@ function deriveDepartment(record: RuntimeAgentRecord): Department {
   return 'Technology & Data'
 }
 
-function deriveSeniority(role?: string | null): Seniority {
+function deriveSeniority(role?: string | null, metadata?: Record<string, unknown> | null): Seniority {
+  const explicitSeniority = firstStringValue(metadata, ['seniority'])
+  const allowed: Seniority[] = ['Junior', 'Mid', 'Senior', 'Lead', 'Manager', 'Director', 'VP', 'C-Level']
+  if (explicitSeniority && allowed.includes(explicitSeniority as Seniority)) {
+    return explicitSeniority as Seniority
+  }
+
   const value = (role ?? '').toLowerCase()
   if (value.includes('chief') || value.includes('lead')) return 'Lead'
+  if (value.includes('director')) return 'Director'
+  if (value.includes('vp')) return 'VP'
   if (value.includes('manager')) return 'Manager'
+  if (value.includes('senior')) return 'Senior'
   return 'Mid'
 }
 
@@ -240,4 +257,13 @@ function parseJson(value?: string | null): Record<string, unknown> | null {
   } catch {
     return null
   }
+}
+
+function firstStringValue(source: Record<string, unknown> | null | undefined, keys: string[]): string | null {
+  if (!source) return null
+  for (const key of keys) {
+    const value = source[key]
+    if (typeof value === 'string' && value.trim()) return value.trim()
+  }
+  return null
 }
