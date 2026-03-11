@@ -136,7 +136,7 @@ function FruitAgent({ employee, position }: { employee: Employee; position: [num
   return (
     <group ref={ref} position={position}>
       <mesh castShadow>
-        <sphereGeometry args={kind === 'cherry' ? 0.18 : kind === 'grape' ? 0.15 : 0.22, 24, 24} />
+        <sphereGeometry args={[kind === 'cherry' ? 0.18 : kind === 'grape' ? 0.15 : 0.22, 24, 24]} />
         <meshStandardMaterial color={color} roughness={0.35} metalness={0.1} />
       </mesh>
       {kind === 'cherry' && (
