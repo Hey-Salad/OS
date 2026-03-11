@@ -1,0 +1,17 @@
+{
+  "name": "heysalad-os",
+  "private": true,
+  "version": "0.0.1",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm --workspace @heysalad-os/web run dev",
+    "dev:api": "npm --workspace @heysalad-os/api run dev",
+    "build:web": "npm --workspace @heysalad-os/web run build",
+    "build:api": "npm --workspace @heysalad-os/api run build",
+    "test": "npm -ws run test --if-present",
+    "typecheck": "npm -ws run typecheck --if-present"
+  }
+}

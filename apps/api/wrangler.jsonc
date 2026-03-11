@@ -1,0 +1,40 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "heysalad-os-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-03-10",
+  "routes": [
+    {
+      "pattern": "api-cloud-os.heysalad.app/*",
+      "zone_name": "heysalad.app"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "heysalad-ai-db",
+      "database_id": "517ee5cd-fd45-4e92-9628-28d60e83a05a",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "DOCUMENTS_BUCKET",
+      "bucket_name": "heysalad-rag-documents"
+    }
+  ],
+  "vectorize": [
+    {
+      "binding": "VECTOR_INDEX",
+      "index_name": "heysalad-rag"
+    }
+  ],
+  "vars": {
+    "ANYWAY_DATASET": "heysalad-os",
+    "ANYWAY_ENVIRONMENT": "development",
+    "AI_GATEWAY_BASE_URL": "https://gateway.ai.cloudflare.com/v1/67a17ada4efeee4480283035cc0c5f90/heysalad-ai",
+    "OPENAI_CHAT_MODEL": "gpt-5.4",
+    "OPENAI_EMBEDDING_MODEL": "text-embedding-3-small",
+    "OPENAI_EMBEDDING_DIMENSIONS": "768"
+  }
+}

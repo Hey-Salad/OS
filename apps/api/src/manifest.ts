@@ -1,0 +1,32 @@
+import type { RouteManifestEntry } from './types';
+
+export const routeManifest: RouteManifestEntry[] = [
+  { method: 'GET', path: '/health', description: 'Worker healthcheck', phase: 'foundation' },
+  { method: 'GET', path: '/api', description: 'Route manifest and runtime capabilities', phase: 'foundation' },
+  { method: 'GET', path: '/api/runtime', description: 'Mission-centric runtime dashboard summary', phase: 'foundation' },
+  { method: 'GET', path: '/api/missions', description: 'List mission records', phase: 'foundation' },
+  { method: 'GET', path: '/api/missions/:id', description: 'Get a single mission record', phase: 'foundation' },
+  { method: 'GET', path: '/api/agents', description: 'List runtime agents synced from OpenClaw', phase: 'foundation' },
+  { method: 'GET', path: '/api/agents/:id', description: 'Get a single runtime agent', phase: 'foundation' },
+  { method: 'GET', path: '/api/sessions', description: 'List runtime sessions synced from OpenClaw', phase: 'foundation' },
+  { method: 'GET', path: '/api/approvals', description: 'List runtime approvals sourced from OpenClaw', phase: 'foundation' },
+  { method: 'POST', path: '/api/approvals/:id/decision', description: 'Queue operator approval decisions for OpenClaw dispatch', phase: 'foundation' },
+  { method: 'GET', path: '/api/activity', description: 'List mission activity events', phase: 'foundation' },
+  { method: 'POST', path: '/api/openclaw/sync', description: 'Ingest an OpenClaw runtime snapshot into the backend', phase: 'foundation' },
+  { method: 'GET', path: '/api/openclaw/pending-decisions', description: 'Read queued approval decisions awaiting OpenClaw dispatch', phase: 'foundation' },
+  { method: 'POST', path: '/api/openclaw/pending-decisions/:id/dispatched', description: 'Mark an approval decision as sent or failed after dispatch', phase: 'foundation' },
+  { method: 'GET', path: '/api/offices', description: 'List offices from D1', phase: 'foundation' },
+  { method: 'POST', path: '/api/offices', description: 'Create an office in D1', phase: 'foundation' },
+  { method: 'GET', path: '/api/employees', description: 'List AI employees from D1', phase: 'foundation' },
+  { method: 'POST', path: '/api/employees', description: 'Create an AI employee in D1', phase: 'foundation' },
+  { method: 'GET', path: '/api/projects', description: 'List projects from D1', phase: 'foundation' },
+  { method: 'POST', path: '/api/projects', description: 'Create a project in D1', phase: 'foundation' },
+  { method: 'GET', path: '/api/tasks', description: 'List tasks from D1', phase: 'foundation' },
+  { method: 'POST', path: '/api/tasks', description: 'Create a task in D1', phase: 'foundation' },
+  { method: 'POST', path: '/api/rag/ingest', description: 'Document ingestion with parsing, chunking, D1 persistence, and optional R2/Vectorize hooks', phase: 'phase_2' },
+  { method: 'POST', path: '/api/rag/query', description: 'Scoped retrieval with D1 fallback and OpenAI-grounded answer generation', phase: 'phase_2' },
+  { method: 'POST', path: '/api/employees/:id/run', description: 'Phase 3 stub for employee execution', phase: 'foundation' },
+  { method: 'POST', path: '/api/tasks/:id/execute', description: 'Phase 3 stub for task execution', phase: 'foundation' },
+  { method: 'POST', path: '/api/tasks/:id/status', description: 'Phase 3 stub for task status transitions', phase: 'foundation' },
+  { method: 'POST', path: '/api/workflows/run', description: 'Phase 3 stub for generic workflow runs', phase: 'foundation' }
+];
