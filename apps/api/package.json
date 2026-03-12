@@ -7,7 +7,14 @@
     "dev": "wrangler dev src/index.ts --local",
     "build": "wrangler deploy src/index.ts --dry-run",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "seed:enterprise:sql": "node scripts/generate-enterprise-seed.mjs 1000",
+    "seed:enterprise:300": "node scripts/generate-enterprise-seed.mjs 300",
+    "seed:enterprise:5000": "node scripts/generate-enterprise-seed.mjs 5000",
+    "d1:migrate:local": "wrangler d1 migrations apply DB --local",
+    "d1:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "d1:seed:local": "wrangler d1 execute DB --local --file scripts/generated-enterprise-seed.sql",
+    "d1:seed:remote": "wrangler d1 execute DB --remote --file scripts/generated-enterprise-seed.sql"
   },
   "dependencies": {
     "@heysalad-os/domain": "0.0.1",

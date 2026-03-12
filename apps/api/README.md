@@ -37,6 +37,11 @@ Production split:
 
 - `GET /health`
 - `GET /api`
+- `GET /api/org/summary`
+- `GET /api/org/offices`
+- `GET /api/org/workforce`
+- `GET /api/org/filters`
+- `GET /api/org/runtime-ops`
 - `GET /api/offices`
 - `POST /api/offices`
 - `GET /api/employees`
@@ -116,6 +121,31 @@ npx wrangler d1 create heysalad-os
 npx wrangler d1 migrations apply DB --local
 npx wrangler d1 migrations apply DB --remote
 ```
+
+## Enterprise seed workflow
+
+Generate deterministic enterprise seed SQL:
+
+```bash
+npm run seed:enterprise:300
+npm run seed:enterprise:sql
+npm run seed:enterprise:5000
+```
+
+Apply generated seed SQL:
+
+```bash
+npm run d1:seed:local
+npm run d1:seed:remote
+```
+
+The enterprise seed now includes:
+
+- Zambia multi-city offices and province modeling
+- At least one office in every African country
+- One office per country globally (from `seeds/countries.global.seed.json`)
+- Workforce generation with coherent reporting lines
+- Runtime queues, workflows, tasks, approvals, budgets, and audit events
 
 ## Suggested resource bindings
 

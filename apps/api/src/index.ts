@@ -5,6 +5,7 @@ import { createFoundationRoutes } from './routes/foundation';
 import { createRagRoutes } from './routes/rag';
 import { createWorkflowRoutes } from './routes/workflows';
 import { createRuntimeRoutes } from './routes/runtime';
+import { createOrgRoutes } from './routes/org';
 import type { AppBindings, AppVariables } from './types';
 
 const app = new Hono<{ Bindings: AppBindings; Variables: AppVariables }>();
@@ -36,6 +37,7 @@ app.get('/health', (c) =>
 
 app.route('/', createFoundationRoutes());
 app.route('/', createRuntimeRoutes());
+app.route('/', createOrgRoutes());
 app.route('/', createRagRoutes());
 app.route('/', createWorkflowRoutes());
 

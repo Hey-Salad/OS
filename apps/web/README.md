@@ -16,3 +16,10 @@ npm run build
 ## Notes
 
 The old Vite frontend was intentionally replaced and archived in `../../archive/web-vite-legacy/`.
+
+The web app now consumes enterprise org APIs:
+
+- `GET /api/org/offices`
+- `GET /api/org/workforce`
+- `GET /api/org/filters`
+- `GET /api/org/summary`

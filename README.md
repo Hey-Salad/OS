@@ -38,6 +38,21 @@ npm run build:web
 npm run build:api
 ```
 
+Enterprise D1 workflow:
+
+```bash
+npm --workspace @heysalad-os/api run d1:migrate:local
+npm --workspace @heysalad-os/api run seed:enterprise:sql
+npm --workspace @heysalad-os/api run d1:seed:local
+```
+
+For remote Cloudflare D1:
+
+```bash
+npm --workspace @heysalad-os/api run d1:migrate:remote
+npm --workspace @heysalad-os/api run d1:seed:remote
+```
+
 ## Deployment shape
 
 ### Web

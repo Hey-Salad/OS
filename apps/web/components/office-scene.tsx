@@ -252,7 +252,7 @@ function OfficeLayout({ city, country, landmarkType, children, employees }: { ci
       <Plant position={[-10, 0, 5]} />
       <Plant position={[10, 0, 5]} />
       {children}
-      <OccupantMarkers officeName={city === 'Lusaka' ? 'Zambia' : city} employees={employees} />
+      <OccupantMarkers officeName={city} employees={employees} />
     </group>
   )
 }
@@ -282,7 +282,24 @@ function OfficeInterior({ office, employees }: { office: Office; employees: Empl
   })
   return (
     <group ref={groupRef}>
-      {office.name === 'San Francisco' ? <SanFranciscoOffice employees={employees} /> : office.name === 'New York' ? <NewYorkOffice employees={employees} /> : office.name === 'London' ? <LondonOffice employees={employees} /> : office.name === 'Tallinn' ? <TallinnOffice employees={employees} /> : <ZambiaOffice employees={employees} />}
+      {office.name === 'San Francisco' ? (
+        <SanFranciscoOffice employees={employees} />
+      ) : office.name === 'New York' ? (
+        <NewYorkOffice employees={employees} />
+      ) : office.name === 'London' ? (
+        <LondonOffice employees={employees} />
+      ) : office.name === 'Tallinn' ? (
+        <TallinnOffice employees={employees} />
+      ) : office.country === 'Zambia' ? (
+        <ZambiaOffice employees={employees} />
+      ) : (
+        <OfficeLayout city={office.name} country={office.country} employees={employees}>
+          <TeamDeskRow positions={[-8, -6, -4]} chairColor="#3a6a8a" label="Operations" labelPosition={[-6, 2.5, -3]} />
+          <TeamDeskRow positions={[4, 6, 8]} chairColor="#ed4c4c" label="Automation" labelPosition={[6, 2.5, -3]} />
+          <TeamAreaLabel position={[0, 2.5, 4.5]} label="Mission Coordination" />
+          <MeetingTable position={[0, 0, 4.5]} color="#222838" />
+        </OfficeLayout>
+      )}
     </group>
   )
 }
