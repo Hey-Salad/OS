@@ -229,16 +229,16 @@ function SimpleWindow({ position, locationType }: { position: [number, number, n
   )
 }
 
-function TeamDeskRow({ positions, chairColor, label, labelPosition }: { positions: number[]; chairColor: string; label: string; labelPosition: [number, number, number] }) {
+function TeamDeskRow({ positions, chairColor, label, labelPosition, frontZ = -3, backZ = -0.5 }: { positions: number[]; chairColor: string; label: string; labelPosition: [number, number, number]; frontZ?: number; backZ?: number }) {
   return (
     <group>
       <TeamAreaLabel position={labelPosition} label={label} />
       {positions.map((x, i) => (
         <group key={`${label}-${i}`}>
-          <Desk position={[x, 0, -3]} />
-          <Chair position={[x, 0, -2.1]} rotation={Math.PI} color={chairColor} />
-          <Desk position={[x, 0, -0.5]} rotation={Math.PI} />
-          <Chair position={[x, 0, -1.3]} color={chairColor} />
+          <Desk position={[x, 0, frontZ]} />
+          <Chair position={[x, 0, frontZ + 0.9]} rotation={Math.PI} color={chairColor} />
+          <Desk position={[x, 0, backZ]} rotation={Math.PI} />
+          <Chair position={[x, 0, backZ - 0.8]} color={chairColor} />
         </group>
       ))}
     </group>
@@ -280,7 +280,7 @@ function NewYorkOffice({ employees }: { employees: Employee[] }) {
   return <OfficeLayout city="New York" country="United States" landmarkType="liberty" employees={employees}><TeamDeskRow positions={[-8,-6,-4]} chairColor="#22c55e" label="Sales" labelPosition={[-6,2.5,-3]} /><TeamDeskRow positions={[4,6,8]} chairColor="#f97316" label="Marketing" labelPosition={[6,2.5,-3]} /><TeamAreaLabel position={[0,2.5,4.5]} label="Executive Boardroom" /><MeetingTable position={[0,0,4.5]} color="#1a1a1e" /></OfficeLayout>
 }
 function LondonOffice({ employees }: { employees: Employee[] }) {
-  return <OfficeLayout city="London" country="United Kingdom" landmarkType="big-ben" employees={employees}><TeamDeskRow positions={[-8,-6,-4]} chairColor="#7c4a1a" label="Operations" labelPosition={[-6,2.5,-3]} /><TeamDeskRow positions={[4,6,8]} chairColor="#8b5a2b" label="Finance" labelPosition={[6,2.5,-3]} /><TeamAreaLabel position={[0,2.5,4.5]} label="Conference Room" /><MeetingTable position={[0,0,4.5]} color="#3a2a1a" /></OfficeLayout>
+  return <OfficeLayout city="London" country="United Kingdom" landmarkType="big-ben" employees={employees}><TeamDeskRow positions={[-8,-6,-4]} chairColor="#7c4a1a" label="Operations" labelPosition={[-6,2.5,-3]} /><TeamDeskRow positions={[-1.5,1.5]} chairColor="#c084fc" label="Strategy" labelPosition={[0,2.5,-3]} /><TeamDeskRow positions={[4,6,8]} chairColor="#8b5a2b" label="Finance" labelPosition={[6,2.5,-3]} /><TeamDeskRow positions={[-6,-3,0,3,6]} chairColor="#f59e0b" label="Trading Floor" labelPosition={[0,2.5,0.9]} frontZ={0.8} backZ={3.1} /><TeamAreaLabel position={[0,2.8,5.8]} label="London Command Room" /><MeetingTable position={[0,0,5.1]} color="#3a2a1a" /><Plant position={[-1.5,0,6.2]} tall /><Plant position={[1.5,0,6.2]} tall /></OfficeLayout>
 }
 function TallinnOffice({ employees }: { employees: Employee[] }) {
   return <OfficeLayout city="Tallinn" country="Estonia" landmarkType="old-town" employees={employees}><TeamDeskRow positions={[-8,-6,-4]} chairColor="#3a6a8a" label="Backend" labelPosition={[-6,2.5,-3]} /><TeamDeskRow positions={[4,6,8]} chairColor="#4a7a9a" label="Frontend" labelPosition={[6,2.5,-3]} /><TeamAreaLabel position={[0,2.5,4.5]} label="Standup Area" /><MeetingTable position={[0,0,4.5]} color="#1a2028" /></OfficeLayout>
@@ -325,7 +325,11 @@ const OFFICE_TIMEZONES: Record<string, { timezone: string; weather: string; temp
   'New York': { timezone: 'America/New_York', weather: 'Partly Cloudy', temp: '15C' },
   London: { timezone: 'Europe/London', weather: 'Overcast', temp: '12C' },
   Tallinn: { timezone: 'Europe/Tallinn', weather: 'Clear', temp: '8C' },
-  Zambia: { timezone: 'Africa/Lusaka', weather: 'Warm', temp: '28C' },
+  Lusaka: { timezone: 'Africa/Lusaka', weather: 'Warm', temp: '28C' },
+  Kitwe: { timezone: 'Africa/Lusaka', weather: 'Warm', temp: '26C' },
+  Ndola: { timezone: 'Africa/Lusaka', weather: 'Clear', temp: '27C' },
+  Livingstone: { timezone: 'Africa/Lusaka', weather: 'Sunny', temp: '29C' },
+  Solwezi: { timezone: 'Africa/Lusaka', weather: 'Humid', temp: '25C' },
 }
 
 function TimeWeatherDisplay({ officeName }: { officeName: string }) {
@@ -341,7 +345,7 @@ function TimeWeatherDisplay({ officeName }: { officeName: string }) {
 }
 
 export function OfficeScene({ office, onBack, employees }: { office: Office; onBack: () => void; employees: Employee[] }) {
-  const officeEmployees = employees.filter((employee) => employee.office === office.name)
+  const officeEmployees = employees.filter((employee) => officeMatchesEmployee(office.name, employee))
   return (
     <div className="w-full h-full relative">
       <div className="absolute top-4 left-4 right-4 z-10 flex justify-between items-start pointer-events-none">

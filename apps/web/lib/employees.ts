@@ -1,6 +1,6 @@
 import { Employee, Department, OfficeName, Seniority, EmployeeStatus, DEPARTMENTS } from './types'
 
-const OFFICES: OfficeName[] = ['San Francisco', 'New York', 'London', 'Tallinn', 'Zambia']
+const OFFICES: OfficeName[] = ['San Francisco', 'New York', 'London', 'Tallinn', 'Lusaka', 'Kitwe', 'Ndola', 'Livingstone', 'Solwezi']
 
 // ─── Name Generation Data ──────────────────────────────────────────────────────
 
@@ -226,9 +226,13 @@ const SKILLS_BY_DEPARTMENT: Record<Department, string[]> = {
 const OFFICE_HEADCOUNTS: Record<OfficeName, number> = {
   "San Francisco": 85,
   "New York": 65,
-  "London": 45,
-  "Tallinn": 55,
-  "Zambia": 50
+  "London": 60,
+  "Tallinn": 50,
+  "Lusaka": 20,
+  "Kitwe": 8,
+  "Ndola": 6,
+  "Livingstone": 3,
+  "Solwezi": 3
 }
 
 // ─── Seniority Distribution (approximate percentages) ──────────────────────────
