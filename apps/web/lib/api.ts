@@ -1,3 +1,4 @@
+import { employees as generatedEmployees } from './employees';
 import { type Employee, type Office, type EmployeeStatus, type WorkforceFilters, type WorkforceFilterOptions } from './types';
 import { fallbackOffices } from './offices';
 
@@ -78,19 +79,20 @@ export async function loadBackendData(filters: WorkforceFilters = {}): Promise<B
       : { countries: [], cities: [], offices: [], departments: [], seniorities: [], statuses: [] };
     const summary = summaryRes.ok ? ((await summaryRes.json()) as ApiOrgSummary).counts : null;
 
-    const employees = mapWorkforce(workforceRecords);
+    const backendEmployees = mapWorkforce(workforceRecords);
+    const employees = backendEmployees.length > 0 ? backendEmployees : generatedEmployees;
     const offices = mapOffices(officeRecords, employees);
 
     return {
-      offices: offices.length > 0 ? offices : fallbackOffices,
+      offices: offices.length > 0 ? offices : fallbackOffices.map((office) => ({ ...office, team: employees.filter((employee) => officeMatchesEmployee(office.name, employee)).length || office.team })),
       employees,
       filterOptions,
       summary
     };
   } catch {
     return {
-      offices: fallbackOffices,
-      employees: [],
+      offices: fallbackOffices.map((office) => ({ ...office, team: generatedEmployees.filter((employee) => officeMatchesEmployee(office.name, employee)).length || office.team })),
+      employees: generatedEmployees,
       filterOptions: { countries: [], cities: [], offices: [], departments: [], seniorities: [], statuses: [] },
       summary: null
     };
@@ -132,7 +134,7 @@ function mapOffices(records: ApiOrgOfficeRecord[], employees: Employee[]): Offic
       lat: record.lat ?? 0,
       lng: record.lng ?? 0,
       description: record.city ? `${record.city} · ${record.office_type}` : record.office_type,
-      team: employees.filter((employee) => employee.office === record.name).length || record.total_agents || 0,
+      team: employees.filter((employee) => officeMatchesEmployee(record.name, employee)).length || record.total_agents || 0,
       color: fallbackColor(index)
     }));
 }
@@ -214,6 +216,13 @@ function slugify(value: string): string {
 
 function fallbackColor(index: number): string {
   return ['#ed4c4c', '#fe6c60', '#faa09a', '#ffd0cd', '#8b5cf6', '#06b6d4', '#22c55e'][index % 7];
+}
+
+function officeMatchesEmployee(officeName: string, employee: Employee): boolean {
+  if (employee.office === officeName) return true;
+  if (officeName === 'Zambia') return employee.country === 'Zambia' || employee.office === 'Lusaka';
+  if (officeName === 'Lusaka') return employee.country === 'Zambia' || employee.office === 'Zambia';
+  return false;
 }
 
 function flagFromIso2(countryCode?: string | null): string {

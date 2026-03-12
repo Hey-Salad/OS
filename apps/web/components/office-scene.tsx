@@ -172,16 +172,32 @@ function FruitAgent({ employee, position }: { employee: Employee; position: [num
   )
 }
 
+function officeMatchesEmployee(officeName: string, employee: Employee) {
+  if (employee.office === officeName) return true
+  if (officeName === 'Zambia' || officeName === 'Lusaka') return employee.country === 'Zambia' || employee.office === 'Zambia' || employee.office === 'Lusaka'
+  return false
+}
+
+function buildOccupantPositions(targetCount: number): [number, number, number][] {
+  const positions: [number, number, number][] = []
+  const leftX = [-8, -6, -4]
+  const rightX = [4, 6, 8]
+  const frontRows = [-2.1, -1.3]
+  const backRows = [3.7, 5.3]
+
+  for (let band = 0; band < Math.max(1, Math.ceil(targetCount / 18)); band++) {
+    const y = 1.05 + band * 0.55
+    leftX.forEach((x) => frontRows.forEach((z) => positions.push([x, y, z])))
+    rightX.forEach((x) => frontRows.forEach((z) => positions.push([x, y, z])))
+    ;[-1.2, 0, 1.2].forEach((x) => backRows.forEach((z) => positions.push([x, y, z])))
+  }
+
+  return positions
+}
+
 function OccupantMarkers({ officeName, employees }: { officeName: string; employees: Employee[] }) {
-  const officeEmployees = employees.filter((employee) => employee.office === officeName)
-  const positions: [number, number, number][] = [
-    [-8, 1.05, -2.1], [-6, 1.05, -2.1], [-4, 1.05, -2.1],
-    [-8, 1.05, -1.3], [-6, 1.05, -1.3], [-4, 1.05, -1.3],
-    [4, 1.05, -2.1], [6, 1.05, -2.1], [8, 1.05, -2.1],
-    [4, 1.05, -1.3], [6, 1.05, -1.3], [8, 1.05, -1.3],
-    [-1.2, 1.05, 3.7], [0, 1.05, 3.7], [1.2, 1.05, 3.7],
-    [-1.2, 1.05, 5.3], [0, 1.05, 5.3], [1.2, 1.05, 5.3],
-  ]
+  const officeEmployees = employees.filter((employee) => officeMatchesEmployee(officeName, employee))
+  const positions = buildOccupantPositions(officeEmployees.length)
 
   return (
     <group>
@@ -269,8 +285,8 @@ function LondonOffice({ employees }: { employees: Employee[] }) {
 function TallinnOffice({ employees }: { employees: Employee[] }) {
   return <OfficeLayout city="Tallinn" country="Estonia" landmarkType="old-town" employees={employees}><TeamDeskRow positions={[-8,-6,-4]} chairColor="#3a6a8a" label="Backend" labelPosition={[-6,2.5,-3]} /><TeamDeskRow positions={[4,6,8]} chairColor="#4a7a9a" label="Frontend" labelPosition={[6,2.5,-3]} /><TeamAreaLabel position={[0,2.5,4.5]} label="Standup Area" /><MeetingTable position={[0,0,4.5]} color="#1a2028" /></OfficeLayout>
 }
-function ZambiaOffice({ employees }: { employees: Employee[] }) {
-  return <OfficeLayout city="Lusaka" country="Zambia" landmarkType="victoria-falls" employees={employees}><TeamDeskRow positions={[-8,-6,-4]} chairColor="#d07830" label="Customer Support" labelPosition={[-6,2.5,-3]} /><TeamDeskRow positions={[4,6,8]} chairColor="#30a868" label="Partnerships" labelPosition={[6,2.5,-3]} /><TeamAreaLabel position={[0,2.5,4.5]} label="Collaboration Hub" /><MeetingTable position={[0,0,4.5]} color="#4a3018" /></OfficeLayout>
+function ZambiaOffice({ officeName, employees }: { officeName: string; employees: Employee[] }) {
+  return <OfficeLayout city={officeName} country="Zambia" landmarkType="victoria-falls" employees={employees}><TeamDeskRow positions={[-8,-6,-4]} chairColor="#d07830" label="Customer Support" labelPosition={[-6,2.5,-3]} /><TeamDeskRow positions={[4,6,8]} chairColor="#30a868" label="Partnerships" labelPosition={[6,2.5,-3]} /><TeamAreaLabel position={[0,2.5,4.5]} label="Collaboration Hub" /><MeetingTable position={[0,0,4.5]} color="#4a3018" /></OfficeLayout>
 }
 
 function OfficeInterior({ office, employees }: { office: Office; employees: Employee[] }) {
@@ -291,7 +307,7 @@ function OfficeInterior({ office, employees }: { office: Office; employees: Empl
       ) : office.name === 'Tallinn' ? (
         <TallinnOffice employees={employees} />
       ) : office.country === 'Zambia' ? (
-        <ZambiaOffice employees={employees} />
+        <ZambiaOffice officeName={office.name} employees={employees} />
       ) : (
         <OfficeLayout city={office.name} country={office.country} employees={employees}>
           <TeamDeskRow positions={[-8, -6, -4]} chairColor="#3a6a8a" label="Operations" labelPosition={[-6, 2.5, -3]} />

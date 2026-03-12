@@ -1,4 +1,6 @@
-import { Employee, Department, OfficeName, Seniority, EmployeeStatus, DEPARTMENTS, OFFICES } from './types'
+import { Employee, Department, OfficeName, Seniority, EmployeeStatus, DEPARTMENTS } from './types'
+
+const OFFICES: OfficeName[] = ['San Francisco', 'New York', 'London', 'Tallinn', 'Zambia']
 
 // ─── Name Generation Data ──────────────────────────────────────────────────────
 
